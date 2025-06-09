@@ -3,7 +3,6 @@ package com.reac_h2.demo.controller;
 import com.reac_h2.demo.model.Tutorial;
 import com.reac_h2.demo.repository.TutorialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -36,7 +35,7 @@ public class TutorialController {
     }
 
     @GetMapping("/tutorials/all")
-    public Flux<Tutorial> getTutorialById() {
+    public Flux<Tutorial> getTutorialAll() {
         return tutorialRepository.findAll();
     }
 

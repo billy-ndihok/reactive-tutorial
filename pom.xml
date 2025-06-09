@@ -28,6 +28,10 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
+		<spring.boot.version>3.5.0</spring.boot.version>
+		<openapi.generator.version>7.13.0</openapi.generator.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -49,9 +53,39 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>3.5.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.8.5</version>
+			<artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+			<version>2.8.8</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>3.0-rc5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>0.2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>2.19.0</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>3.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>2.2.31</version>
 		</dependency>
 		<dependency>
 			<groupId>io.projectreactor</groupId>
@@ -78,7 +112,77 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring.boot.version}</version>
+				<configuration>
+					<jvmArguments>--enable-preview</jvmArguments>
+				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<release>21</release>
+					<compilerArgs>
+						<arg>--enable-preview</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>${openapi.generator.version}</version>
+				<executions>
+					<execution>
+						<id>generate-api</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/contract/demo-api.yaml</inputSpec>
+							<generatorName>spring</generatorName>
+							<output>${project.build.directory}/generated-sources/openapi</output>
+							<apiPackage>com.reac_h2.api</apiPackage>
+							<modelPackage>com.reac_h2.model</modelPackage>
+							<invokerPackage>com.reac_h2.invoker</invokerPackage>
+							<configOptions>
+								<!-- Configuration Java 21 -->
+								<java8>false</java8>
+								<dateLibrary>java8</dateLibrary>
+
+								<!-- Configuration WebFlux -->
+								<reactive>true</reactive>
+								<interfaceOnly>true</interfaceOnly>
+								<skipDefaultInterface>true</skipDefaultInterface>
+
+								<!-- Configuration JSON uniquement -->
+								<serializationLibrary>jackson</serializationLibrary>
+								<withXml>false</withXml>
+								<jsonTypeMappings>LocalDateTime=java.time.LocalDateTime</jsonTypeMappings>
+
+								<!-- Configuration générale -->
+								<useTags>true</useTags>
+								<hideGenerationTimestamp>true</hideGenerationTimestamp>
+								<generateApiTests>false</generateApiTests>
+								<generateModelTests>false</generateModelTests>
+								<generateApiDocumentation>false</generateApiDocumentation>
+								<generateModelDocumentation>false</generateModelDocumentation>
+
+								<!-- Spring Boot 3 et Jakarta -->
+								<useSpringBoot3>true</useSpringBoot3>
+								<useJakartaEe>true</useJakartaEe>
+
+								<!-- Optimisations pour JSON simple -->
+								<returnSuccessCode>false</returnSuccessCode>
+								<skipOperationExample>false</skipOperationExample>
+								<generateSeparateModels>true</generateSeparateModels>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 
